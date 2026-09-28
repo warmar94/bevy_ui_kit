@@ -1,0 +1,73 @@
+[package]
+name = "bevy_ui_kit"
+version = "0.1.0"
+edition = "2021"
+# Bevy 0.19's own minimum.
+rust-version = "1.95"
+description = "Style-free UI behaviour for Bevy: scroll areas with a draggable scrollbar, wheel scrolling and offsets kept across rebuilds, wiring for Bevy's headless Slider, motion helpers and a glyph-coverage test helper. Behaviour only - you bring the look."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/warmar94/bevy_ui_kit"
+readme = "README.md"
+keywords = ["bevy", "ui", "scroll", "slider", "gamedev"]
+categories = ["game-development", "gui"]
+# Not part of the published package.
+exclude = ["NOTES.md", "docs/", "/target"]
+
+[features]
+default = []
+# `Serialize` / `Deserialize` on every parameter struct (motion specs, scroll and motion config), so
+# a game can load them from its own RON / JSON theme file.
+serialize = ["dep:serde"]
+
+# Bevy is pinned EXACTLY and only its sub-crates are used, without default features: the crate adds
+# no Bevy feature a game did not ask for, and a game on Bevy 0.19.0 ends up with ONE Bevy.
+[dependencies]
+bevy_app = { version = "=0.19.0", default-features = false, features = ["std"] }
+bevy_ecs = { version = "=0.19.0", default-features = false, features = ["std"] }
+bevy_math = { version = "=0.19.0", default-features = false, features = ["std"] }
+bevy_time = { version = "=0.19.0", default-features = false, features = ["std"] }
+# The wheel (mouse), slider stepping (keyboard, gamepad).
+bevy_input = { version = "=0.19.0", default-features = false, features = ["std", "mouse", "keyboard", "gamepad"] }
+# Focused keyboard / gamepad input reaches the focused slider through its dispatch.
+bevy_input_focus = { version = "=0.19.0", default-features = false, features = ["std", "keyboard", "gamepad"] }
+bevy_ui = { version = "=0.19.0", default-features = false }
+# `Visibility`, for the scrollbar auto-hide and the pop-out `Hide` ending.
+bevy_camera = { version = "=0.19.0", default-features = false }
+# `TextSpan` for the glyph check.
+bevy_text = { version = "=0.19.0", default-features = false }
+# The headless `Scrollbar` / `Slider` widgets this crate wires up.
+bevy_ui_widgets = { version = "=0.19.0", default-features = false }
+# Bevy's logging goes through `tracing`; its subscriber (LogPlugin) picks these messages up.
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+serde = { version = "1", default-features = false, features = ["std", "derive"], optional = true }
+
+[dev-dependencies]
+# Tests run headless on MinimalPlugins; the examples open a window, so the render stack is here too.
+bevy = { version = "=0.19.0", default-features = false, features = [
+    "std",
+    "multi_threaded",
+    "async_executor",
+    "bevy_log",
+    "bevy_asset",
+    "bevy_window",
+    "bevy_winit",
+    "x11",
+    "bevy_render",
+    "bevy_core_pipeline",
+    "bevy_text",
+    "default_font",
+    "bevy_ui",
+    "bevy_ui_render",
+    "bevy_ui_widgets",
+    "bevy_input_focus",
+    "bevy_picking",
+    "ui_picking",
+    "keyboard",
+    "mouse",
+    "gamepad",
+] }
+serde = { version = "1", features = ["derive"] }
+ron = "0.12"
+
+[package.metadata.docs.rs]
+all-features = true
